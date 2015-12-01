@@ -61,10 +61,10 @@ def addEvent():
         Success: 1
         Failure: 2
     """
-    coord = Point()
+    x = request.form["x"]
+    y = request.form["y"]
+    coord = Point(x, y)
 
-    coord.x = request.form["x"]
-    coord.y = request.form["y"]
     event_time = request.form["event_time"]
     event_type = Event_Type.get_id(request.form["event_type"])
     report_time = datetime.now()
@@ -76,3 +76,8 @@ def addEvent():
                    )
 
     return success_response(1, "Added")
+
+
+if __name__ == "__main__":
+    app.debug = True
+    app.run(host='0.0.0.0')

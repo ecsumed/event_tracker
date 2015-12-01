@@ -21,7 +21,7 @@ class Point(object):
 
     def toJson(self, ):
         return json.dumps({'x': self.x,
-                           'y': self.y
+                           'y': self.y,
                            })
 
     def fromJson(self, json_pt):
@@ -63,7 +63,7 @@ class Event(MySQLModel):
     coord = pw.CharField()
     event_time = pw.DateTimeField(default=datetime.now())
     report_time = pw.DateTimeField(default=datetime.now())
-    event_type = pw.ForeignKeyField(Event_Type, related_name='id')
+    event_type = pw.ForeignKeyField(Event_Type)
 
     @classmethod
     def addEvent(cls, coord, event_time, report_time, event_type_id):
@@ -74,7 +74,7 @@ class Event(MySQLModel):
         event = Event(coord=coord.toJson(),
                       event_time=event_time,
                       report_time=report_time,
-                      event_type_id=event_type_id)
+                      event_type=event_type_id)
 
         event.save()
         return (True, event)
