@@ -1,6 +1,7 @@
+import cStringIO
+from PIL import Image
 from itertools import cycle
 import urllib
-import cStringIO
 
 from models import Event
 from models import events_to_dict
@@ -68,8 +69,8 @@ class Static_Map_API(object):
         """
             Given a url, will fetch the image and save to memory
         """
-        file = cStringIO.StringIO(urllib.urlopen(url).read())
-        return file
+        img_file = cStringIO.StringIO(urllib.urlopen(url).read())
+        return Image.open(img_file)
 
     def get_image(self, ):
         """

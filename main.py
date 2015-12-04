@@ -1,4 +1,5 @@
 from datetime import datetime
+from StringIO import StringIO
 
 from flask import Flask
 from flask import request
@@ -86,9 +87,17 @@ def index():
     image = image_api_handler.get_image()
 
     # return success_response(1, "Added")
-    image.seek(0)
-    return send_file(image, mimetype='image/jpg')
+    # image.seek(0)
+    # return send_file(image, mimetype='image/jpeg')
+    return serve_pil_image(image)
+
+
+def serve_pil_image(pil_img):
+    img_io = StringIO()
+    pil_img.save(img_io, 'JPEG', quality=70)
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/jpeg')
 
 if __name__ == "__main__":
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run(host='1.0.0.0')
