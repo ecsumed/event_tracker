@@ -28,8 +28,51 @@ class Point(object):
         dict_pt = json.loads(json_pt)
         self.x = dict_pt['x']
         self.y = dict_pt['y']
-
         return self
+
+
+def point_list_toJson(point_list):
+    return [pt.toJson() for pt in point_list]
+
+
+def point_list_fromJson(point_list, isSinglePoint):
+    """
+        Converts a list of dicts to a list of Points.
+    """
+    if isSinglePoint:
+        point = point_list[0]
+        return Point(float(point['x']), float(point['y']))
+    else:
+        return [Point(float(pt['x']), float(pt['y'])) for pt in point_list]
+
+
+def events_to_dict(events):
+    """
+        Converts rows of events returned from the db query to a manageable dict.
+
+        INPUT:
+            List of Event objects.
+
+        OUTPUT:
+            {
+                u'Pickpocket': [Point(), Point()],
+                u'Robbery': [Point(), Point()]
+            }
+    """
+    data = {}
+    for event in events:
+        # Get event_type info
+        event_type = Event_Type.get(Event_Type.id == event.event_type_id)
+
+        # Convert coord's to a list of dicts
+        event.coord = json.loads(event.coord)
+
+        if event_type.name not in data:
+            data[event_type.name] = []
+
+        data[event_type.name].\
+            append(point_list_fromJson(event.coord, event_type.isSinglePoint))
+    return data
 
 
 class MySQLModel(pw.Model):
@@ -41,6 +84,7 @@ class MySQLModel(pw.Model):
 class Event_Type(MySQLModel):
     id = pw.IntegerField(primary_key=True)
     name = pw.CharField()
+    isSinglePoint = pw.BooleanField()
 
     @classmethod
     def get_id(cls, event_type_name):
@@ -68,10 +112,20 @@ class Event(MySQLModel):
     @classmethod
     def addEvent(cls, coord, event_time, report_time, event_type_id):
         """
-        Creates a new event.
+        Creates a new event with the required paramets.
+
+        INPUT:
+            ex.
+            coord = '[{"x": "24.891352", "y": "67.03474"}]' (json object)
+            event_time = 2012-11-16 01:09:34 (datetime object)
+            report_time = 2012-11-16 01:09:34 (datetime object)
+            event_type_id = 4 (int) (foreign key id)
+
+        OUTPUT:
+            Newly created Event object
         """
 
-        event = Event(coord=coord.toJson(),
+        event = Event(coord=coord,
                       event_time=event_time,
                       report_time=report_time,
                       event_type=event_type_id)
