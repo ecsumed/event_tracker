@@ -4,6 +4,7 @@ from itertools import cycle
 import urllib
 
 from models import Event
+from models import Event_Type
 from models import events_to_dict
 import local
 import settings
@@ -45,13 +46,19 @@ class Static_Map_API(object):
         params += 'format={}&'.format(settings.FORMAT)
 
         for event_type, coords in url_data.iteritems():
-            if event_type is ('Rally' or 'Protest'):
+            event_info = Event_Type.\
+                get(Event_Type.name == event_type)
+
+            if not event_info.isSinglePoint:
                 continue
 
             else:
-                params += 'markers=color:{}|label:{}'.format('red',
-                                                             event_type[0],
-                                                             )
+                if event_info.icon_url:
+                    params += 'markers=icon:{}'.format(event_info.icon_url)
+                else:
+                    params += 'markers=color:{}|label:{}'.format('red',
+                                                                 event_type[0],
+                                                                 )
                 for coord in coords:
                     params += '|{x},{y}'.format(x=coord.x, y=coord.y)
 
@@ -62,7 +69,6 @@ class Static_Map_API(object):
                                               )
         # handle 2000 character limit url
         # print len(url)
-
         return url
 
     def fetch_image(self, url):

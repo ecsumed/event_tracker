@@ -85,6 +85,7 @@ class Event_Type(MySQLModel):
     id = pw.IntegerField(primary_key=True)
     name = pw.CharField()
     isSinglePoint = pw.BooleanField()
+    icon_url = pw.CharField()
 
     @classmethod
     def get_id(cls, event_type_name):

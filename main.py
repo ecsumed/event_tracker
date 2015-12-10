@@ -87,9 +87,6 @@ def index():
     """
     image = image_api_handler.get_image()
 
-    # return success_response(1, "Added")
-    # image.seek(0)
-    # return send_file(image, mimetype='image/jpeg')
     return serve_pil_image(image)
 
 
