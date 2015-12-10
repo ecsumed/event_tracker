@@ -3,6 +3,6 @@ GOOGLE_BASE_URL = 'https://maps.googleapis.com/maps/api/' +\
 
 IMAGE_SIZE = (2048, 2048)
 
-ZOOM_LEVEL = 13
+ZOOM_LEVEL = 12
 SCALE = 2
 FORMAT = 'jpg'

@@ -50,8 +50,14 @@ class Static_Map_API(object):
                 get(Event_Type.name == event_type)
 
             if not event_info.isSinglePoint:
-                continue
-
+                if event_info.name == 'Rally':
+                    for e in coords:
+                        params += 'path=color:{}|weight:{}'.format('0xff0000ff',
+                                                                   '5',
+                                                                   )
+                        for coord in e:
+                            params += '|{x},{y}'.format(x=coord.x, y=coord.y)
+                        params += '&'
             else:
                 if event_info.icon_url:
                     params += 'markers=icon:{}'.format(event_info.icon_url)
@@ -68,7 +74,8 @@ class Static_Map_API(object):
                                               api_key=next(google_api_key),
                                               )
         # handle 2000 character limit url
-        # print len(url)
+        print len(url)
+        print url
         return url
 
     def fetch_image(self, url):
